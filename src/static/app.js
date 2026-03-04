@@ -568,6 +568,12 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `
         }
+        <div class="share-buttons">
+          <span class="share-label">Share:</span>
+          <button class="share-btn share-twitter" title="Share on X (Twitter)" aria-label="Share on X (Twitter)">𝕏</button>
+          <button class="share-btn share-whatsapp" title="Share on WhatsApp" aria-label="Share on WhatsApp">💬</button>
+          <button class="share-btn share-copy" title="Copy to clipboard" aria-label="Copy activity details">🔗</button>
+        </div>
       </div>
     `;
 
@@ -586,6 +592,39 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handlers for share buttons
+    const shareText = `Check out "${name}" at Mergington High School!\n${details.description}\nSchedule: ${formattedSchedule}`;
+    const shareUrl = window.location.href;
+
+    activityCard.querySelector(".share-twitter").addEventListener("click", () => {
+      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+      window.open(twitterUrl, "_blank", "noopener,noreferrer");
+    });
+
+    activityCard.querySelector(".share-whatsapp").addEventListener("click", () => {
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText + "\n" + shareUrl)}`;
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    });
+
+    activityCard.querySelector(".share-copy").addEventListener("click", (e) => {
+      const copyBtn = e.currentTarget;
+      navigator.clipboard.writeText(shareText + "\n" + shareUrl).then(() => {
+        copyBtn.textContent = "✓";
+        copyBtn.title = "Copied!";
+        setTimeout(() => {
+          copyBtn.textContent = "🔗";
+          copyBtn.title = "Copy to clipboard";
+        }, 2000);
+      }).catch(() => {
+        copyBtn.textContent = "✗";
+        copyBtn.title = "Unable to copy — please copy manually";
+        setTimeout(() => {
+          copyBtn.textContent = "🔗";
+          copyBtn.title = "Copy to clipboard";
+        }, 2000);
+      });
+    });
 
     activitiesList.appendChild(activityCard);
   }
